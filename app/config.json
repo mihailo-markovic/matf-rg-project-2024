@@ -1,6 +1,9 @@
 {
   "resources": {
     "models": {
+      "ferdinand": {
+        "path": "Ferdinand/Ferdinand.obj"
+      }
     }
   },
   "window": {
