@@ -3,6 +3,9 @@
     "models": {
       "ferdinand": {
         "path": "Ferdinand/Ferdinand.obj"
+      },
+      "floor": {
+        "path": "floor/floor.obj"
       }
     }
   },

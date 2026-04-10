@@ -9,7 +9,8 @@
 #include <engine/platform/PlatformEventObserver.hpp>
 
 namespace app {
-class MainPlatformEventObserver : public engine::platform::PlatformEventObserver {
+
+class MainPlatformEventObserver final : public engine::platform::PlatformEventObserver {
 public:
     void on_mouse_move(engine::platform::MousePosition position) override;
 };
@@ -28,6 +29,8 @@ class MainController : public engine::core::Controller {
     void end_draw() override;
 
     void draw_Ferdinand();
+
+    void draw_floor();
 
     void update_camera();
 
