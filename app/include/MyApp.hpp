@@ -1,6 +1,3 @@
-//
-// Created by grafika on 1/21/26.
-//
 
 #ifndef MATF_RG_PROJECT_MYAPP_HPP
 #define MATF_RG_PROJECT_MYAPP_HPP

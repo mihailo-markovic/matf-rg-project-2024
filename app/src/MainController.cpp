@@ -3,8 +3,9 @@
 //
 
 #include "../include/MainController.hpp"
-
+#include "../include/GUIController.hpp"
 #include "../../engine/libs/glad/include/glad/glad.h"
+#include "../../engine/test/app/include/app/GUIController.hpp"
 
 #include <engine/core/Controller.hpp>
 #include <engine/graphics/GraphicsController.hpp>
@@ -17,9 +18,12 @@
 namespace app {
 
 void MainPlatformEventObserver::on_mouse_move(engine::platform::MousePosition position) {
-    auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
+    auto gui_controller = engine::core::Controller::get<GUIController>();
+    if (!gui_controller->is_enabled()) {
+        auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
 
-    camera->rotate_camera(position.dx, position.dy);
+        camera->rotate_camera(position.dx, position.dy);
+    }
 
 }
 
@@ -47,7 +51,7 @@ void MainController::draw_Ferdinand() {
     shader->set_mat4("view", graphics->camera()->view_matrix());
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-    model = glm::scale(model, glm::vec3(0.3f));
+    model = glm::scale(model, glm::vec3(0.1f));
     shader->set_mat4("model", model);
     ferdinand->draw(shader);
 }
@@ -75,6 +79,10 @@ void MainController::draw_floor() {
 }
 
 void MainController::update_camera() {
+    auto gui_controller = engine::core::Controller::get<GUIController>();
+    if (gui_controller->is_enabled()) { return; }
+
+
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     auto camera = graphics->camera();
