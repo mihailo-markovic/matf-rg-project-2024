@@ -35,6 +35,8 @@ private:
 
     void draw_floor();
 
+    void draw_lamp();
+
     void update_camera();
 
 };
