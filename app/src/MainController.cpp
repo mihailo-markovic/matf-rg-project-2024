@@ -1,7 +1,3 @@
-//
-// Created by grafika on 1/21/26.
-//
-
 #include "../include/MainController.hpp"
 #include "../include/GUIController.hpp"
 #include "../../engine/libs/glad/include/glad/glad.h"
@@ -59,23 +55,20 @@ void MainController::draw_Ferdinand() {
 void MainController::draw_floor() {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+    auto camera = graphics->camera();
 
-    engine::resources::Model *floor = resources->model("floor");
+    engine::resources::Model *floor = resources->model("floor1");
     engine::resources::Shader *shader = resources->shader("basic");
 
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
-    shader->set_mat4("view", graphics->camera()->view_matrix());
+    shader->set_mat4("view", camera->view_matrix());
+
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -1.0f, -2.0f));
-    model = glm::rotate(model, glm::radians(-60.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-    model = glm::scale(model, glm::vec3(0.3f));
-
+    model = glm::scale(model, glm::vec3(7.0f, 1.0f, 7.0f));
     shader->set_mat4("model", model);
-    floor->draw(shader);
 
+    floor->draw(shader);
 }
 
 void MainController::update_camera() {

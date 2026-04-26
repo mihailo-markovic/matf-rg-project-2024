@@ -4,8 +4,8 @@
       "ferdinand": {
         "path": "Ferdinand/Ferdinand.obj"
       },
-      "floor": {
-        "path": "floor/floor.obj"
+      "floor1": {
+        "path": "floor1/floor1.obj"
       }
     }
   },

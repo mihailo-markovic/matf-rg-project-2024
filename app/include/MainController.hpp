@@ -4,6 +4,7 @@
 #include <engine/core/App.hpp>
 #include <engine/core/Controller.hpp>
 #include <engine/platform/PlatformEventObserver.hpp>
+#include <engine/resources/Mesh.hpp>
 
 namespace app {
 
@@ -13,6 +14,10 @@ public:
 };
 
 class MainController : public engine::core::Controller {
+
+public:
+    std::string_view name() const override { return "app::MainController"; }
+
     void initialize() override;
 
     bool loop() override;
@@ -25,14 +30,12 @@ class MainController : public engine::core::Controller {
 
     void end_draw() override;
 
+private:
     void draw_Ferdinand();
 
     void draw_floor();
 
     void update_camera();
-
-public:
-    std::string_view name() const override { return "app::MainController"; }
 
 };
 }// MainController
