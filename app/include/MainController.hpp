@@ -39,6 +39,7 @@ private:
 
     void update_camera();
 
+    void light_setup();
 };
 }// MainController
 

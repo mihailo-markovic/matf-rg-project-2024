@@ -102,11 +102,44 @@ void MainController::update_camera() {
     if (platform->key(engine::platform::KEY_D).is_down()) { camera->move_camera(engine::graphics::Camera::Movement::RIGHT, dt); }
 }
 
+void MainController::light_setup() {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+    auto camera = graphics->camera();
+
+    engine::resources::Shader *shader = resources->shader("basic");
+    shader->use();
+
+    shader->set_vec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
+    shader->set_vec3("dirLight.ambient", glm::vec3(0.2));
+    shader->set_vec3("dirLight.diffuse", glm::vec3(0.4f));
+    shader->set_vec3("dirLight.specular", glm::vec3(1.0f));
+
+    shader->set_vec3("spotLight.position", glm::vec3(0.7f, 3.0f, -1.0f));
+    shader->set_vec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
+    shader->set_vec3("spotLight.ambient", glm::vec3(0.2));
+    shader->set_vec3("spotLight.diffuse", glm::vec3(1.0f));
+    shader->set_vec3("spotLight.specular", glm::vec3(1.0f));
+    shader->set_float("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+    shader->set_float("spotLight.outerCutOff", glm::cos(glm::radians(40.0f)));
+    shader->set_float("spotLight.constant", 1.0f);
+    shader->set_float("spotLight.linear", 0.045f);
+    shader->set_float("spotLight.quadratic", 0.0075f);
+
+
+    shader->set_float("material_shininess", 30.0f);
+
+    shader->set_vec3("viewPos", camera->Position);
+
+}
+
 void MainController::update() { update_camera(); }
 
 void MainController::begin_draw() { engine::graphics::OpenGL::clear_buffers(); }
 
 void MainController::draw() {
+
+    light_setup();
     draw_floor();
     draw_Ferdinand();
     draw_lamp();
