@@ -39,7 +39,10 @@ private:
 
     void update_camera();
 
-    void light_setup();
+    void update_light();
+     void light_setup();
+
+    bool m_spotlight_on = true;
 };
 }// MainController
 
