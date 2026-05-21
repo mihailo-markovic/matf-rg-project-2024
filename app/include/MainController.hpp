@@ -40,9 +40,16 @@ private:
     void update_camera();
 
     void update_light();
-     void light_setup();
+
+    void update_ferdinand();
+
+    void light_setup();
 
     bool m_spotlight_on = true;
+
+    glm::vec3 m_ferdinand_pos = glm::vec3(0.0f, 0.0f, -1.0f);
+    float m_ferdinand_yaw = 0.0f;
+
 };
 }// MainController
 

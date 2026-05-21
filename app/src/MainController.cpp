@@ -46,7 +46,8 @@ void MainController::draw_Ferdinand() {
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
+    model = glm::translate(model, m_ferdinand_pos);
+    model = glm::rotate(model, glm::radians(m_ferdinand_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
     model = glm::scale(model, glm::vec3(0.2f));
     shader->set_mat4("model", model);
     ferdinand->draw(shader);
@@ -110,6 +111,24 @@ void MainController::update_light() {
     if (platform->key(engine::platform::KEY_O).state() == engine::platform::Key::State::JustPressed) { m_spotlight_on = !m_spotlight_on; }
 }
 
+void MainController::update_ferdinand() {
+    auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+    float dt = platform->dt();
+    float back_speed = 0.5f;
+    float rot_speed = 30.0f;
+
+    if (platform->key(engine::platform::KEY_I).is_down()) {
+        m_ferdinand_pos.x += glm::sin(glm::radians(m_ferdinand_yaw)) * dt;
+        m_ferdinand_pos.z += glm::cos(glm::radians(m_ferdinand_yaw)) * dt;
+    }
+    if (platform->key(engine::platform::KEY_K).is_down()) {
+        m_ferdinand_pos.x -= glm::sin(glm::radians(m_ferdinand_yaw)) * back_speed * dt;
+        m_ferdinand_pos.z -= glm::cos(glm::radians(m_ferdinand_yaw)) * back_speed * dt;
+    }
+    if (platform->key(engine::platform::KEY_J).is_down()) { m_ferdinand_yaw += rot_speed * dt; }
+    if (platform->key(engine::platform::KEY_L).is_down()) { m_ferdinand_yaw -= rot_speed * dt; }
+}
+
 void MainController::light_setup() {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
@@ -151,6 +170,7 @@ void MainController::light_setup() {
 void MainController::update() {
     update_camera();
     update_light();
+    update_ferdinand();
 }
 
 void MainController::begin_draw() { engine::graphics::OpenGL::clear_buffers(); }
