@@ -5,10 +5,6 @@
         "path": "Ferdinand/Ferdinand.obj",
         "flip_uvs": true
       },
-      "floor1": {
-        "path": "floor1/floor1.obj",
-        "flip_uvs": true
-      },
       "floor": {
         "path": "floor/floor1.obj",
         "flip_uvs": true
