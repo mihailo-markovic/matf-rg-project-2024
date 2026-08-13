@@ -9,6 +9,10 @@
         "path": "floor1/floor1.obj",
         "flip_uvs": true
       },
+      "floor": {
+        "path": "floor/floor1.obj",
+        "flip_uvs": true
+      },
       "lamp": {
         "path": "lamp/source/street_lamp.fbx",
         "flip_uvs": true

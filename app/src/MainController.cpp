@@ -45,6 +45,10 @@ void MainController::draw_Ferdinand() {
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
+    shader->set_bool("useParallax", false);
+    shader->set_float("heightScale", 0.0f);
+    shader->set_vec3("dirLight_dir", glm::vec3(1.0f, -1.0f, 1.0f));
+    shader->set_vec3("spotLight_pos", glm::vec3(0.7f, 3.0f, -1.0f));
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, m_ferdinand_pos);
     model = glm::rotate(model, glm::radians(m_ferdinand_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -57,13 +61,17 @@ void MainController::draw_floor() {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
-    engine::resources::Model *floor = resources->model("floor1");
+    engine::resources::Model *floor = resources->model("floor");
     engine::resources::Shader *shader = resources->shader("basic");
 
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
-
+    shader->set_bool("useParallax", true);
+    shader->set_float("heightScale", 0.1f);
+    shader->set_vec3("dirLight_dir", glm::vec3(1.0f, -1.0f, 1.0f));
+    shader->set_vec3("spotLight_pos", glm::vec3(0.7f, 3.0f, -1.0f));
+    shader->set_vec3("spotLight_dir", glm::vec3(0.0f, -1.0f, 0.0f));
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(7.0f, 1.0f, 7.0f));
     shader->set_mat4("model", model);
@@ -81,6 +89,10 @@ void MainController::draw_lamp() {
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
+    shader->set_bool("useParallax", false);
+    shader->set_float("heightScale", 0.0f);
+    shader->set_vec3("dirLight_dir", glm::vec3(1.0f, -1.0f, 1.0f));
+    shader->set_vec3("spotLight_pos", glm::vec3(0.7f, 3.0f, -1.0f));
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(1.0f, 0.0f, -1.0f));
     model = glm::scale(model, glm::vec3(0.03f));
