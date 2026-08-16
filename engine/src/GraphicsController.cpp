@@ -57,9 +57,7 @@ void GraphicsPlatformEventObserver::on_window_resize(int width, int height) {
     CHECKED_GL_CALL(glViewport, 0, 0, width, height);
 }
 
-std::string_view GraphicsController::name() const {
-    return "GraphicsController";
-}
+std::string_view GraphicsController::name() const { return "GraphicsController"; }
 
 void GraphicsController::begin_gui() {
     ImGui_ImplOpenGL3_NewFrame();
@@ -85,5 +83,22 @@ void GraphicsController::draw_skybox(const resources::Shader *shader, const reso
     CHECKED_GL_CALL(glBindVertexArray, 0);
     CHECKED_GL_CALL(glDepthFunc, GL_LESS);// set depth function back to default
     CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_CUBE_MAP, 0);
+}
+
+void GraphicsController::draw_parallax_map(const resources::Shader *shader,
+                                           resources::Model *model,
+                                           const glm::mat4 &model_matrix,
+                                           float height_scale, const glm::vec3 &dir_light_dir,
+                                           const glm::vec3 &spot_light_pos) {
+    shader->use();
+    shader->set_mat4("projection", projection_matrix());
+    shader->set_mat4("view", m_camera.view_matrix());
+    shader->set_mat4("model", model_matrix);
+    shader->set_vec3("viewPos", m_camera.Position);
+    shader->set_float("heightScale", height_scale);
+    shader->set_vec3("dirLight_dir", dir_light_dir);
+    shader->set_vec3("spotLight_pos", spot_light_pos);
+    shader->set_vec3("spotLight_dir", glm::vec3(0.0f, -1.0f, 0.0f));
+    model->draw(shader);
 }
 }// namespace engine::graphics

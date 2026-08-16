@@ -9,6 +9,7 @@
 #include <engine/core/Controller.hpp>
 #include <engine/graphics/Camera.hpp>
 #include <engine/platform/PlatformEventObserver.hpp>
+#include <engine/resources/Model.hpp>
 
 struct ImGuiContext;
 
@@ -86,9 +87,14 @@ public:
     */
     void draw_skybox(const resources::Shader *shader, const resources::Skybox *skybox);
 
-    Camera *camera() {
-        return &m_camera;
-    }
+    void draw_parallax_map(const resources::Shader *shader,
+                           resources::Model *model,
+                           const glm::mat4 &model_matrix,
+                           float height_scale,
+                           const glm::vec3 &dir_light_dir,
+                           const glm::vec3 &spot_light_pos);
+
+    Camera *camera() { return &m_camera; }
 
     /**
     * @brief Compute the projection matrix.
@@ -123,17 +129,13 @@ public:
     * Projection matrix is always computed when the @ref GraphicsController::projection_matrix is called.
     * @returns @ref PerspectiveMatrixParams
     */
-    PerspectiveMatrixParams &perspective_params() {
-        return m_perspective_params;
-    }
+    PerspectiveMatrixParams &perspective_params() { return m_perspective_params; }
 
     /**
     * @brief Get the current @ref PerspectiveMatrixParams values.
     * @returns @ref PerspectiveMatrixParams
     */
-    const PerspectiveMatrixParams &perspective_params() const {
-        return m_perspective_params;
-    }
+    const PerspectiveMatrixParams &perspective_params() const { return m_perspective_params; }
 
     /**
     * @brief Use this function to change the orthographic projection matrix parameters.
@@ -141,17 +143,13 @@ public:
     * when @ref GraphicsController::projection_matrix is called.
     * @returns @ref PerspectiveMatrixParams
     */
-    OrthographicMatrixParams &orthographic_params() {
-        return m_ortho_params;
-    }
+    OrthographicMatrixParams &orthographic_params() { return m_ortho_params; }
 
     /**
     * @brief Get the current @ref OrthographicMatrixParams values.
     * @returns @ref PerspectiveMatrixParams
     */
-    const OrthographicMatrixParams &orthographic_params() const {
-        return m_ortho_params;
-    }
+    const OrthographicMatrixParams &orthographic_params() const { return m_ortho_params; }
 
 private:
     /**
@@ -176,8 +174,7 @@ private:
 class GraphicsPlatformEventObserver final : public platform::PlatformEventObserver {
 public:
     explicit GraphicsPlatformEventObserver(GraphicsController *graphics)
-        : m_graphics(graphics) {
-    }
+    : m_graphics(graphics) {}
 
     void on_window_resize(int width, int height) override;
 
