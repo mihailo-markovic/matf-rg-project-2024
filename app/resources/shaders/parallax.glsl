@@ -114,11 +114,11 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir) {
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;
-    float currentDepthMapValue = texture(texture_height1, currentTexCoords).r;
+    float currentDepthMapValue = 1.0 - texture(texture_height1, currentTexCoords).r;
 
     while (currentLayerDepth < currentDepthMapValue) {
         currentTexCoords -= deltaTexCoords;
-        currentDepthMapValue = texture(texture_height1, currentTexCoords).r;
+        currentDepthMapValue = 1.0 - texture(texture_height1, currentTexCoords).r;
         currentLayerDepth += layerDepth;
     }
 
