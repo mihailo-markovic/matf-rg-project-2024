@@ -61,26 +61,26 @@ void MainController::draw_floor() {
     engine::resources::Model *floor = resources->model("floor");
     engine::resources::Shader *shader = resources->shader("basic");
 
-    // shader->use();
-    // shader->set_mat4("projection", graphics->projection_matrix());
-    // shader->set_mat4("view", graphics->camera()->view_matrix());
-    // glm::mat4 model = glm::mat4(1.0f);
-    // model = glm::scale(model, glm::vec3(7.0f, 1.0f, 7.0f));
-    // shader->set_mat4("model", model);
-    // floor->draw(shader);
-
-
+    shader->use();
+    shader->set_mat4("projection", graphics->projection_matrix());
+    shader->set_mat4("view", graphics->camera()->view_matrix());
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(7.0f, 1.0f, 7.0f));
+    shader->set_mat4("model", model);
+    floor->draw(shader);
 
-    graphics->draw_parallax_map(
-            resources->shader("parallax"),
-            resources->model("floor"),
-            model,
-            0.05f,
-            glm::vec3(1.0f, -1.0f, 1.0f),
-            glm::vec3(0.7f, 3.0f, -1.0f)
-            );
+
+    // glm::mat4 model = glm::mat4(1.0f);
+    // model = glm::scale(model, glm::vec3(7.0f, 1.0f, 7.0f));
+    //
+    // graphics->draw_parallax_map(
+    //         resources->shader("parallax"),
+    //         resources->model("floor"),
+    //         model,
+    //         0.05f,
+    //         glm::vec3(1.0f, -1.0f, 1.0f),
+    //         glm::vec3(0.7f, 3.0f, -1.0f)
+    //         );
 }
 
 void MainController::draw_lamp() {
@@ -173,6 +173,13 @@ void MainController::light_setup() {
         shader->set_vec3("dirLight.specular", glm::vec3(0.7f));
         shader->set_vec3("spotLight.position", glm::vec3(0.7f, 3.0f, -1.0f));
         shader->set_vec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
+        shader->set_vec3("pointLight.position", glm::vec3(1.0f, 1.5f, 5.0f));
+        shader->set_vec3("pointLight.ambient", glm::vec3(0.1f));
+        shader->set_vec3("pointLight.diffuse", glm::vec3(1.0f, 0.9f, 0.7f));
+        shader->set_vec3("pointLight.specular", glm::vec3(1.0f));
+        shader->set_float("pointLight.constant", 1.0f);
+        shader->set_float("pointLight.linear", 0.09f);
+        shader->set_float("pointLight.quadratic", 0.032f);
         if (m_spotlight_on) {
             shader->set_vec3("spotLight.ambient", glm::vec3(0.2f));
             shader->set_vec3("spotLight.diffuse", glm::vec3(1.0f));
