@@ -12,6 +12,10 @@
       "lamp": {
         "path": "lamp/source/street_lamp.fbx",
         "flip_uvs": true
+      },
+      "lamp1": {
+        "path": "lamp1/StreetLight.obj",
+        "flip_uvs": true
       }
     }
   },

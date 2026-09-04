@@ -37,6 +37,8 @@ private:
 
     void draw_lamp();
 
+    void draw_lamp1();
+
     void update_camera();
 
     void update_light();
