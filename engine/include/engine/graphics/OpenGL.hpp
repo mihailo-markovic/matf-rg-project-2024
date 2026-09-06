@@ -48,7 +48,7 @@ public:
     * @returns Return value if the `glfun` has it, otherwise void.
     */
     template<typename TResult, typename... TOpenGLArgs, typename... Args>
-    static TResult call(std::source_location location, TResult (*glfun)(TOpenGLArgs...), Args &&...args) {
+    static TResult call(std::source_location location, TResult (*glfun)(TOpenGLArgs...), Args &&... args) {
         // @formatter:off
         if constexpr (!std::is_same_v<TResult, void>) {
             auto result = glfun(std::forward<Args>(args)...);
@@ -118,6 +118,15 @@ public:
     * @returns OpenGL id to the cubemap texture
     */
     static uint32_t load_skybox_textures(const std::filesystem::path &path, bool flip_uvs = false);
+
+    /**
+    * @brief Initializes a depth cubemap framebuffer for point shadow mapping.
+    * @param shadow_width Width of the shadow map.
+    * @param shadow_height Height of the shadow map.
+    * @param fbo Output FBO id.
+    * @param depth_cubemap Output depth cubemap id.
+    */
+    static void init_point_shadow(uint32_t shadow_width, uint32_t shadow_height, uint32_t &fbo, uint32_t &depth_cubemap);
 
     /**
     * @brief Enables depth testing.
