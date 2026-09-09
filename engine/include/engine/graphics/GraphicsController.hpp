@@ -10,6 +10,7 @@
 #include <engine/graphics/Camera.hpp>
 #include <engine/platform/PlatformEventObserver.hpp>
 #include <engine/resources/Model.hpp>
+#include <engine/graphics/PointShadow.hpp>
 
 struct ImGuiContext;
 
@@ -93,6 +94,29 @@ public:
                            float height_scale,
                            const glm::vec3 &dir_light_dir,
                            const glm::vec3 &spot_light_pos);
+
+    /**
+    * @brief Initializes point shadow mapping for a point light.
+    * @param near Near plane of the shadow frustum.
+    * @param far Far plane of the shadow frustum.
+    * @returns Initialized PointShadow object.
+    */
+    PointShadow init_point_shadow(float near = 1.0f, float far = 25.0f);
+
+    /**
+    * @brief Renders the scene into the depth cubemap from the point light's perspective.
+    * @param shadow The PointShadow object.
+    * @param depth_shader The depth shader (must be point_shadow_depth.glsl).
+    * @param light_pos Position of the point light.
+    */
+    void begin_point_shadow_render(const PointShadow &shadow,
+                                   const resources::Shader *depth_shader,
+                                   const glm::vec3 &light_pos);
+
+    /**
+    * @brief Ends the shadow render pass and restores the viewport.
+    */
+    void end_point_shadow_render();
 
     Camera *camera() { return &m_camera; }
 

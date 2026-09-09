@@ -101,4 +101,44 @@ void GraphicsController::draw_parallax_map(const resources::Shader *shader,
     shader->set_vec3("spotLight_dir", glm::vec3(0.0f, -1.0f, 0.0f));
     model->draw(shader);
 }
+
+PointShadow GraphicsController::init_point_shadow(float near, float far) {
+    uint32_t fbo, depth_cubemap;
+    OpenGL::init_point_shadow(1024, 1024, fbo, depth_cubemap);
+    return PointShadow(fbo, depth_cubemap, near, far);
+}
+
+void GraphicsController::begin_point_shadow_render(const PointShadow &shadow, const resources::Shader *depth_shader, const glm::vec3 &light_pos) {
+    auto platform = engine::core::Controller::get<platform::PlatformController>();
+
+    float near = shadow.m_near_plane;
+    float far = shadow.m_far_plane;
+
+    glm::mat4 shadow_proj = glm::perspective(glm::radians(90.0f), 1.0f, near, far);
+    std::vector<glm::mat4> shadow_transforms = {
+            shadow_proj * glm::lookAt(light_pos, light_pos + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
+            shadow_proj * glm::lookAt(light_pos, light_pos + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
+            shadow_proj * glm::lookAt(light_pos, light_pos + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)),
+            shadow_proj * glm::lookAt(light_pos, light_pos + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)),
+            shadow_proj * glm::lookAt(light_pos, light_pos + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
+            shadow_proj * glm::lookAt(light_pos, light_pos + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)),
+    };
+
+    CHECKED_GL_CALL(glViewport, 0, 0, 1024, 1024);
+    CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, shadow.m_fbo);
+    CHECKED_GL_CALL(glClear, GL_DEPTH_BUFFER_BIT);
+
+    depth_shader->use();
+    for (int i = 0; i < 6; ++i) { depth_shader->set_mat4("shadowMatrices[" + std::to_string(i) + "]", shadow_transforms[i]); }
+    depth_shader->set_vec3("lightPos", light_pos);
+    depth_shader->set_float("far_plane", far);
+}
+
+void GraphicsController::end_point_shadow_render() {
+    auto platform = engine::core::Controller::get<platform::PlatformController>();
+    CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
+    CHECKED_GL_CALL(glViewport, 0, 0,
+                    platform->window()->width(),
+                    platform->window()->height());
+}
 }// namespace engine::graphics
