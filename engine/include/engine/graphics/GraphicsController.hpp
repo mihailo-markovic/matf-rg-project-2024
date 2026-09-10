@@ -91,9 +91,7 @@ public:
     void draw_parallax_map(const resources::Shader *shader,
                            resources::Model *model,
                            const glm::mat4 &model_matrix,
-                           float height_scale,
-                           const glm::vec3 &dir_light_dir,
-                           const glm::vec3 &spot_light_pos);
+                           float height_scale);
 
     /**
     * @brief Initializes point shadow mapping for a point light.

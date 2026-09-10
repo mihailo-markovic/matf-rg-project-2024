@@ -66,14 +66,26 @@ uniform vec3 viewPos;
 uniform DirLight dirLight;
 uniform SpotLight spotLight;
 uniform PointLight pointLight;
+uniform samplerCube depthMap;
+uniform float far_plane;
+uniform vec3 pointLightPos;
 
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_specular0;
 uniform float material_shininess;
 
+vec3 sampleOffsetDirections[20] = vec3[](
+vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
+vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
+vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
+);
+
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+float ShadowCalculation(vec3 fragPos);
 
 void main() {
     vec3 norm = normalize(Normal);
@@ -81,6 +93,8 @@ void main() {
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
     result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
     result += CalcPointLight(pointLight, norm, FragPos, viewDir);
+    float shadow = ShadowCalculation(FragPos);
+    result += (1.0 - shadow) * CalcPointLight(pointLight, norm, FragPos, viewDir);
     FragColor = vec4(result, 1.0);
 }
 
@@ -136,4 +150,21 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     diffuse *= attenuation;
     specular *= attenuation;
     return ambient + diffuse + specular;
+}
+
+float ShadowCalculation(vec3 fragPos) {
+    vec3 fragToLight = fragPos - pointLightPos;
+    float currentDepth = length(fragToLight);
+    float shadow = 0.0;
+    float bias = 0.15;
+    int samples = 20;
+    float viewDistance = length(viewPos - fragPos);
+    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
+    for (int i = 0; i < samples; ++i) {
+        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        closestDepth *= far_plane;
+        if (currentDepth - bias > closestDepth)
+        shadow += 1.0;
+    }
+    return shadow / float(samples);
 }

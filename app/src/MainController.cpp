@@ -25,8 +25,10 @@ void MainPlatformEventObserver::on_mouse_move(engine::platform::MousePosition po
 
 void MainController::initialize() {
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
     engine::graphics::OpenGL::enable_depth_testing();
+    m_point_shadow = graphics->init_point_shadow(1.0f, 25.0f);
 }
 
 bool MainController::loop() {
@@ -65,21 +67,19 @@ void MainController::draw_floor() {
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(7.0f, 1.0f, 7.0f));
+    model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
     shader->set_mat4("model", model);
     floor->draw(shader);
 
 
     // glm::mat4 model = glm::mat4(1.0f);
-    // model = glm::scale(model, glm::vec3(7.0f, 1.0f, 7.0f));
+    // model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
     //
     // graphics->draw_parallax_map(
     //         resources->shader("parallax"),
     //         resources->model("floor"),
     //         model,
-    //         0.05f,
-    //         glm::vec3(1.0f, -1.0f, 1.0f),
-    //         glm::vec3(0.7f, 3.0f, -1.0f)
+    //         0.02f
     //         );
 }
 
@@ -199,6 +199,34 @@ void MainController::light_setup() {
     }
 }
 
+void MainController::draw_scene_depth(engine::resources::Shader *depth_shader) {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, m_ferdinand_pos);
+    model = glm::rotate(model, glm::radians(m_ferdinand_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.2f));
+    depth_shader->set_mat4("model", model);
+    resources->model("ferdinand")->draw(depth_shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
+    depth_shader->set_mat4("model", model);
+    resources->model("floor")->draw(depth_shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(1.0f, 0.0f, -1.0f));
+    model = glm::scale(model, glm::vec3(0.03f));
+    depth_shader->set_mat4("model", model);
+    resources->model("lamp")->draw(depth_shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(1.0f, 0.0f, 5.0f));
+    model = glm::scale(model, glm::vec3(0.07f, 0.1f, 0.07f));
+    depth_shader->set_mat4("model", model);
+    resources->model("lamp1")->draw(depth_shader);
+}
+
 void MainController::update() {
     update_camera();
     update_light();
@@ -208,8 +236,28 @@ void MainController::update() {
 void MainController::begin_draw() { engine::graphics::OpenGL::clear_buffers(); }
 
 void MainController::draw() {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+
+    glm::vec3 point_light_pos = glm::vec3(1.0f, 1.5f, 5.0f);
+
+    auto *depth_shader = resources->shader("point_shadow_depth");
+    graphics->begin_point_shadow_render(m_point_shadow, depth_shader, point_light_pos);
+    draw_scene_depth(depth_shader);
+    graphics->end_point_shadow_render();
 
     light_setup();
+    auto *basic_shader = resources->shader("basic");
+    auto *parallax_shader = resources->shader("parallax");
+    for (auto *shader: {basic_shader, parallax_shader}) {
+        shader->use();
+        shader->set_int("depthMap", 5);
+        shader->set_float("far_plane", m_point_shadow.far_plane());
+        shader->set_vec3("pointLightPos", point_light_pos);
+    }
+    CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE5);
+    CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_CUBE_MAP, m_point_shadow.depth_cubemap());
+
     draw_floor();
     draw_Ferdinand();
     draw_lamp();

@@ -88,16 +88,15 @@ void GraphicsController::draw_skybox(const resources::Shader *shader, const reso
 void GraphicsController::draw_parallax_map(const resources::Shader *shader,
                                            resources::Model *model,
                                            const glm::mat4 &model_matrix,
-                                           float height_scale, const glm::vec3 &dir_light_dir,
-                                           const glm::vec3 &spot_light_pos) {
+                                           float height_scale) {
     shader->use();
     shader->set_mat4("projection", projection_matrix());
     shader->set_mat4("view", m_camera.view_matrix());
     shader->set_mat4("model", model_matrix);
     shader->set_vec3("viewPos", m_camera.Position);
     shader->set_float("heightScale", height_scale);
-    shader->set_vec3("dirLight_dir", dir_light_dir);
-    shader->set_vec3("spotLight_pos", spot_light_pos);
+    shader->set_vec3("dirLight_dir", glm::vec3(1.0f, -1.0f, 1.0f));
+    shader->set_vec3("spotLight_pos", glm::vec3(0.7f, 3.0f, -1.0f));
     shader->set_vec3("spotLight_dir", glm::vec3(0.0f, -1.0f, 0.0f));
     model->draw(shader);
 }

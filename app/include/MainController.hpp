@@ -5,6 +5,7 @@
 #include <engine/core/Controller.hpp>
 #include <engine/platform/PlatformEventObserver.hpp>
 #include <engine/resources/Mesh.hpp>
+#include <engine/graphics/PointShadow.hpp>
 
 namespace app {
 
@@ -47,11 +48,14 @@ private:
 
     void light_setup();
 
+    void draw_scene_depth(engine::resources::Shader *depth_shader);
+
     bool m_spotlight_on = true;
 
     glm::vec3 m_ferdinand_pos = glm::vec3(0.0f, 0.0f, -1.0f);
     float m_ferdinand_yaw = 0.0f;
 
+    engine::graphics::PointShadow m_point_shadow;
 };
 }// MainController
 
