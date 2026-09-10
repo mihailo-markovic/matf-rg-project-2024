@@ -98,6 +98,7 @@ void GraphicsController::draw_parallax_map(const resources::Shader *shader,
     shader->set_vec3("dirLight_dir", glm::vec3(1.0f, -1.0f, 1.0f));
     shader->set_vec3("spotLight_pos", glm::vec3(0.7f, 3.0f, -1.0f));
     shader->set_vec3("spotLight_dir", glm::vec3(0.0f, -1.0f, 0.0f));
+    shader->set_vec3("pointLight_pos", glm::vec3(1.0f, 1.5f, 5.0f));
     model->draw(shader);
 }
 
