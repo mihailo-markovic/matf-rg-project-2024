@@ -13,6 +13,7 @@ out vec3 TangentLightDir;
 out vec3 TangentSpotPos;
 out vec3 TangentSpotDir;
 out vec3 TangentPointPos;
+out vec3 FragPos;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -24,7 +25,7 @@ uniform vec3 spotLight_dir;
 uniform vec3 pointLight_pos;
 
 void main() {
-    vec3 fragPos = vec3(model * vec4(aPos, 1.0));
+    FragPos = vec3(model * vec4(aPos, 1.0));
     TexCoords = aTexCoords;
 
     mat3 normalMatrix = transpose(inverse(mat3(model)));
@@ -35,13 +36,13 @@ void main() {
     mat3 TBN = transpose(mat3(T, B, N));
 
     TangentViewPos = TBN * viewPos;
-    TangentFragPos = TBN * fragPos;
+    TangentFragPos = TBN * FragPos;
     TangentLightDir = TBN * dirLight_dir;
     TangentSpotPos = TBN * spotLight_pos;
     TangentSpotDir = TBN * spotLight_dir;
     TangentPointPos = TBN * pointLight_pos;
 
-    gl_Position = projection * view * vec4(fragPos, 1.0);
+    gl_Position = projection * view * vec4(FragPos, 1.0);
 }
 
 //#shader fragment
@@ -83,12 +84,25 @@ in vec3 TangentLightDir;
 in vec3 TangentSpotPos;
 in vec3 TangentSpotDir;
 in vec3 TangentPointPos;
+in vec3 FragPos;
 
+uniform vec3 viewPos;
+uniform vec3 pointLightPos;
 uniform DirLight dirLight;
 uniform SpotLight spotLight;
 uniform PointLight pointLight;
+uniform samplerCube depthMap;
+uniform float far_plane;
 uniform float material_shininess;
 uniform float heightScale;
+
+vec3 sampleOffsetDirections[20] = vec3[](
+vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
+vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
+vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
+);
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
@@ -99,6 +113,7 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir);
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords);
+float ShadowCalculation(vec3 fragPos);
 
 void main() {
     vec3 viewDir = normalize(TangentViewPos - TangentFragPos);
@@ -120,6 +135,8 @@ void main() {
     vec3 result = CalcDirLight(tangentDirLight, norm, viewDir, texCoords);
     result += CalcSpotLight(tangentSpotLight, norm, TangentFragPos, viewDir, texCoords);
     result += CalcPointLight(tangentPointLight, norm, TangentFragPos, viewDir, texCoords);
+    float shadow = ShadowCalculation(FragPos);
+    result += (1.0 - shadow) * CalcPointLight(tangentPointLight, norm, TangentFragPos, viewDir, texCoords);
     FragColor = vec4(result, 1.0);
 }
 
@@ -192,4 +209,22 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     diffuse *= attenuation;
     specular *= attenuation;
     return ambient + diffuse + specular;
+}
+
+float ShadowCalculation(vec3 fragPos) {
+
+    vec3 fragToLight = fragPos - pointLightPos;
+    float currentDepth = length(fragToLight);
+    float shadow = 0.0;
+    float bias = 0.15;
+    int samples = 20;
+    float viewDistance = length(viewPos - FragPos);
+    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
+    for (int i = 0; i < samples; ++i) {
+        float closestDepth = texture(depthMap, fragToLight + sampleOffsetDirections[i] * diskRadius).r;
+        closestDepth *= far_plane;
+        if (currentDepth - bias > closestDepth)
+        shadow += 1.0;
+    }
+    return shadow / float(samples);
 }
