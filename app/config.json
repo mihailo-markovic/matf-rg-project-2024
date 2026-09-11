@@ -16,6 +16,10 @@
       "lamp1": {
         "path": "lamp1/StreetLight.obj",
         "flip_uvs": true
+      },
+      "hangar": {
+        "path": "hangar1/scene.gltf",
+        "flip_uvs": true
       }
     }
   },

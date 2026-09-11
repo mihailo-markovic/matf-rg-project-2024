@@ -40,6 +40,8 @@ private:
 
     void draw_lamp1();
 
+    void draw_hangar();
+
     void update_camera();
 
     void update_light();

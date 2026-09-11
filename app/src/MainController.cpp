@@ -117,6 +117,25 @@ void MainController::draw_lamp1() {
     lamp->draw(shader);
 }
 
+void MainController::draw_hangar() {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+
+    engine::resources::Model *hangar = resources->model("hangar");
+    engine::resources::Shader *shader = resources->shader("basic");
+
+    shader->use();
+    shader->set_mat4("projection", graphics->projection_matrix());
+    shader->set_mat4("view", graphics->camera()->view_matrix());
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 5.0f));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.002f));
+
+    shader->set_mat4("model", model);
+    hangar->draw(shader);
+}
+
 void MainController::update_camera() {
     auto gui_controller = engine::core::Controller::get<GUIController>();
     if (gui_controller->is_enabled()) { return; }
@@ -273,6 +292,13 @@ void MainController::draw_scene_depth(engine::resources::Shader *depth_shader) {
     model = glm::scale(model, glm::vec3(0.07f, 0.1f, 0.07f));
     depth_shader->set_mat4("model", model);
     resources->model("lamp1")->draw(depth_shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 5.0f));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.002f));
+    depth_shader->set_mat4("model", model);
+    resources->model("hangar")->draw(depth_shader);
 }
 
 void MainController::update() {
@@ -311,6 +337,7 @@ void MainController::draw() {
     draw_Ferdinand();
     draw_lamp();
     draw_lamp1();
+    draw_hangar();
 }
 
 void MainController::end_draw() {
