@@ -158,6 +158,54 @@ void MainController::update_ferdinand() {
     if (platform->key(engine::platform::KEY_L).is_down()) { m_ferdinand_yaw -= rot_speed * dt; }
 }
 
+void MainController::update_events() {
+    auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+    float dt = platform->dt();
+
+
+    bool t_down = platform->key(engine::platform::KEY_T).is_down();
+
+    if (t_down && !m_prev_t_down && m_event_state == EventState::IDLE) {
+        m_event_state = EventState::WAITING;
+        m_event_timer = 0.0f;
+    }
+    m_prev_t_down = t_down;
+
+    const float M_SECONDS = 3.0f;
+    const float MOVE_SECONDS = 3.0f;
+    const float N_SECONDS = 2.0f;
+    const float ROT_SECONDS = 6.0f;
+
+    if (m_event_state == EventState::WAITING && m_event_timer >= M_SECONDS) {
+        m_event_state = EventState::MOVING;
+        m_event_timer = 0.0f;
+    } else if (m_event_state == EventState::MOVING && m_event_timer >= MOVE_SECONDS) {
+        m_event_state = EventState::WAITING_ROT;
+        m_event_timer = 0.0f;
+    } else if (m_event_state == EventState::WAITING_ROT && m_event_timer >= N_SECONDS) {
+        m_event_state = EventState::ROTATING;
+        m_event_timer = 0.0f;
+        m_event_rot_start = m_ferdinand_yaw;
+    } else if (m_event_state == EventState::ROTATING && m_event_timer >= ROT_SECONDS) {
+        m_ferdinand_yaw = m_event_rot_start + 360.0f;
+        m_event_state = EventState::IDLE;
+        m_event_timer = 0.0f;
+    }
+    m_prev_t_down = t_down;
+
+    m_event_timer += dt;
+
+
+    if (m_event_state == EventState::MOVING) {
+        float speed = 1.0f;
+        m_ferdinand_pos.x += glm::sin(glm::radians(m_ferdinand_yaw)) * speed * dt;
+        m_ferdinand_pos.z += glm::cos(glm::radians(m_ferdinand_yaw)) * speed * dt;
+    } else if (m_event_state == EventState::ROTATING) {
+        float rot_speed = 360.0f / ROT_SECONDS;
+        m_ferdinand_yaw += rot_speed * dt;
+    }
+}
+
 void MainController::light_setup() {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
@@ -231,6 +279,7 @@ void MainController::update() {
     update_camera();
     update_light();
     update_ferdinand();
+    update_events();
 }
 
 void MainController::begin_draw() { engine::graphics::OpenGL::clear_buffers(); }

@@ -46,6 +46,8 @@ private:
 
     void update_ferdinand();
 
+    void update_events();
+
     void light_setup();
 
     void draw_scene_depth(engine::resources::Shader *depth_shader);
@@ -54,6 +56,20 @@ private:
 
     glm::vec3 m_ferdinand_pos = glm::vec3(0.0f, 0.0f, -1.0f);
     float m_ferdinand_yaw = 0.0f;
+
+    enum class EventState {
+        IDLE,
+        WAITING,
+        MOVING,
+        WAITING_ROT,
+        ROTATING
+    };
+
+    EventState m_event_state = EventState::IDLE;
+    float m_event_timer = 0.0f;
+    float m_event_rot_start = 0.0f;
+    bool m_prev_t_down = false;
+    bool m_prev_r_down = false;
 
     engine::graphics::PointShadow m_point_shadow;
 };
