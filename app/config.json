@@ -10,7 +10,7 @@
         "flip_uvs": true
       },
       "lamp": {
-        "path": "lamp/source/street_lamp.fbx",
+        "path": "lamp/scene.gltf",
         "flip_uvs": true
       },
       "lamp1": {
