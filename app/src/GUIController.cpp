@@ -1,4 +1,4 @@
-#include <../include/GUIController.hpp>
+#include <GUIController.hpp>
 #include <engine/core/Engine.hpp>
 #include <engine/graphics/GraphicsController.hpp>
 #include <imgui.h>
@@ -25,4 +25,4 @@ void GUIController::draw() {
 
     graphics->end_gui();
 }
-}// namespace engine::test::app
+}// namespace app

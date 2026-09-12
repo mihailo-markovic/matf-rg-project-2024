@@ -48,7 +48,7 @@ public:
     * @returns Return value if the `glfun` has it, otherwise void.
     */
     template<typename TResult, typename... TOpenGLArgs, typename... Args>
-    static TResult call(std::source_location location, TResult (*glfun)(TOpenGLArgs...), Args &&... args) {
+    static TResult call(std::source_location location, TResult (*glfun)(TOpenGLArgs...), Args &&...args) {
         // @formatter:off
         if constexpr (!std::is_same_v<TResult, void>) {
             auto result = glfun(std::forward<Args>(args)...);

@@ -1,10 +1,7 @@
 
-#include "../include/MyApp.hpp"
-
-#include "../../engine/test/app/include/app/GUIController.hpp"
-#include "../include/GUIController.hpp"
 #include <GUIController.hpp>
 #include <MainController.hpp>
+#include <MyApp.hpp>
 #include <spdlog/spdlog.h>
 
 namespace app {
@@ -16,4 +13,4 @@ void MyApp::app_setup() {
     gui_controller->after(main_controller);
 }
 
-}// app
+}// namespace app

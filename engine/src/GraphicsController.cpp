@@ -134,6 +134,11 @@ void GraphicsController::begin_point_shadow_render(const PointShadow &shadow, co
     depth_shader->set_float("far_plane", far);
 }
 
+void GraphicsController::bind_point_shadow_map(const PointShadow &shadow, uint32_t texture_unit) {
+    CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0 + texture_unit);
+    CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_CUBE_MAP, shadow.depth_cubemap());
+}
+
 void GraphicsController::end_point_shadow_render() {
     auto platform = engine::core::Controller::get<platform::PlatformController>();
     CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);

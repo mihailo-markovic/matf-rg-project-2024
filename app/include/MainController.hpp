@@ -3,9 +3,9 @@
 #define MATF_RG_PROJECT_MAINCONTROLLER_HPP
 #include <engine/core/App.hpp>
 #include <engine/core/Controller.hpp>
+#include <engine/graphics/PointShadow.hpp>
 #include <engine/platform/PlatformEventObserver.hpp>
 #include <engine/resources/Mesh.hpp>
-#include <engine/graphics/PointShadow.hpp>
 
 namespace app {
 
@@ -32,7 +32,7 @@ public:
     void end_draw() override;
 
 private:
-    void draw_Ferdinand();
+    void draw_ferdinand();
 
     void draw_floor();
 
@@ -75,6 +75,6 @@ private:
 
     engine::graphics::PointShadow m_point_shadow;
 };
-}// MainController
+}// namespace app
 
-#endif //MATF_RG_PROJECT_MAINCONTROLLER_HPP
+#endif//MATF_RG_PROJECT_MAINCONTROLLER_HPP

@@ -104,7 +104,7 @@ std::string_view gl_call_error_description(GLenum error) {
         case GL_INVALID_VALUE: return "GL_INVALID_VALUE: A numeric argument is out of range. The offending command is ignored and has no other side effect than to set the error flag.  ";
         case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION: The specified operation is not allowed in the current state. The offending command is ignored and has no other side effect than to set the error flag.  ";
         case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION: The framebuffer object is not complete."
-                    "The offending command is ignored and has no other side effect than to set the error flag.";
+                                                      "The offending command is ignored and has no other side effect than to set the error flag.";
         case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY: There is not enough memory left to execute the command. The state of the GL is undefined, except for the state of the error flags, after this error is recorded. . ";
         default: return "No Description";
     }
@@ -182,7 +182,19 @@ void OpenGL::disable_depth_testing() { CHECKED_GL_CALL(glDisable, GL_DEPTH_TEST)
 void OpenGL::clear_buffers() { CHECKED_GL_CALL(glClear, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); }
 
 uint32_t face_index(std::string_view name) {
-    if (name == "right") { return 0; } else if (name == "left") { return 1; } else if (name == "top") { return 2; } else if (name == "bottom") { return 3; } else if (name == "front") { return 4; } else if (name == "back") { return 5; } else {
+    if (name == "right") {
+        return 0;
+    } else if (name == "left") {
+        return 1;
+    } else if (name == "top") {
+        return 2;
+    } else if (name == "bottom") {
+        return 3;
+    } else if (name == "front") {
+        return 4;
+    } else if (name == "back") {
+        return 5;
+    } else {
         RG_SHOULD_NOT_REACH_HERE(
                 "Unknown face name: {}. The cubemap textures should be named: right, left, top, bottom, front, back; by their respective faces in the cubemap. The extension of the image file is ignored.",
                 name);

@@ -16,6 +16,6 @@ private:
 
     void draw() override;
 };
-}
+}// namespace app
 
-#endif //MATF_RG_PROJECT_GUICONTROLLER_HPP
+#endif//MATF_RG_PROJECT_GUICONTROLLER_HPP

@@ -1,13 +1,10 @@
-#include "../include/MainController.hpp"
-#include "../include/GUIController.hpp"
-#include "../../engine/libs/glad/include/glad/glad.h"
-#include "../../engine/test/app/include/app/GUIController.hpp"
+#include <GUIController.hpp>
+#include <MainController.hpp>
 
 #include <engine/core/Controller.hpp>
 #include <engine/graphics/GraphicsController.hpp>
 #include <engine/graphics/OpenGL.hpp>
 #include <engine/platform/PlatformController.hpp>
-#include <engine/platform/PlatformEventObserver.hpp>
 #include <engine/resources/ResourcesController.hpp>
 #include <spdlog/spdlog.h>
 
@@ -20,7 +17,6 @@ void MainPlatformEventObserver::on_mouse_move(engine::platform::MousePosition po
 
         camera->rotate_camera(position.dx, position.dy);
     }
-
 }
 
 void MainController::initialize() {
@@ -37,7 +33,7 @@ bool MainController::loop() {
     return true;
 }
 
-void MainController::draw_Ferdinand() {
+void MainController::draw_ferdinand() {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
@@ -79,8 +75,7 @@ void MainController::draw_floor() {
             resources->shader("parallax"),
             resources->model("floor"),
             model,
-            0.02f
-            );
+            0.02f);
 }
 
 void MainController::draw_lamp() {
@@ -332,11 +327,10 @@ void MainController::draw() {
         shader->set_float("far_plane", m_point_shadow.far_plane());
         shader->set_vec3("pointLightPos", point_light_pos);
     }
-    CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE5);
-    CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_CUBE_MAP, m_point_shadow.depth_cubemap());
+    graphics->bind_point_shadow_map(m_point_shadow, 5);
 
     draw_floor();
-    draw_Ferdinand();
+    draw_ferdinand();
     draw_lamp();
     draw_lamp1();
     draw_hangar();
@@ -346,6 +340,6 @@ void MainController::end_draw() {
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     platform->swap_buffers();
 }
-}
+}// namespace app
 
 // MainController

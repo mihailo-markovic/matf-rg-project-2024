@@ -111,6 +111,8 @@ public:
                                    const resources::Shader *depth_shader,
                                    const glm::vec3 &light_pos);
 
+    void bind_point_shadow_map(const PointShadow &shadow, uint32_t texture_unit = 5);
+
     /**
     * @brief Ends the shadow render pass and restores the viewport.
     */
