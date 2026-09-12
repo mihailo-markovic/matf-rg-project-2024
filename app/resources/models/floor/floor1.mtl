@@ -1,0 +1,5 @@
+newmtl floor_mat
+map_Kd Floor.png
+map_Kn Floor_Normal.png
+map_Ks Floor_Spec.png
+map_disp Floor_Height.png

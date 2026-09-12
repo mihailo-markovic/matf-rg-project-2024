@@ -120,6 +120,15 @@ public:
     static uint32_t load_skybox_textures(const std::filesystem::path &path, bool flip_uvs = false);
 
     /**
+    * @brief Initializes a depth cubemap framebuffer for point shadow mapping.
+    * @param shadow_width Width of the shadow map.
+    * @param shadow_height Height of the shadow map.
+    * @param fbo Output FBO id.
+    * @param depth_cubemap Output depth cubemap id.
+    */
+    static void init_point_shadow(uint32_t shadow_width, uint32_t shadow_height, uint32_t &fbo, uint32_t &depth_cubemap);
+
+    /**
     * @brief Enables depth testing.
     */
     static void enable_depth_testing();

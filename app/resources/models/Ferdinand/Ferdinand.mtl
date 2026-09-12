@@ -1,0 +1,19 @@
+newmtl 63628781-08df-4a77-a26b-784795ccf07b
+Kd 1.000 1.000 1.000
+Ks 0.251 0.251 0.251
+Ns 30
+Ke 0.000 0.000 0.000
+map_Kd textures/ferdinand_d.jpg
+map_Ks textures/ferdinand_s.jpg
+map_normal textures/ferdinand_nm.jpg
+
+newmtl 7b0163b9-122d-47c2-9e31-1ef4654c2504
+Kd 1.000 1.000 1.000
+Ks 0.251 0.251 0.251
+Ns 30
+Ke 0.000 0.000 0.000
+map_Kd textures/ferdinand_track_d.jpg
+map_Ks textures/ferdinand_track_s.jpg
+map_normal textures/ferdinand_track_nm.jpg
+map_d textures/ferdinand_track_s.jpg
+
