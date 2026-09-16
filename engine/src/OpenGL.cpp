@@ -153,11 +153,13 @@ uint32_t OpenGL::load_skybox_textures(const std::filesystem::path &path, bool fl
     return texture_id;
 }
 
-void OpenGL::init_point_shadow(uint32_t shadow_width, uint32_t shadow_height, uint32_t &fbo, uint32_t &depth_cubemap) {
-    CHECKED_GL_CALL(glGenFramebuffers, 1, &fbo);
+OpenGL::PointShadowData OpenGL::init_point_shadow(uint32_t shadow_width, uint32_t shadow_height) {
+    PointShadowData data;
 
-    CHECKED_GL_CALL(glGenTextures, 1, &depth_cubemap);
-    CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_CUBE_MAP, depth_cubemap);
+    CHECKED_GL_CALL(glGenFramebuffers, 1, &data.fbo);
+
+    CHECKED_GL_CALL(glGenTextures, 1, &data.depth_cubemap);
+    CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_CUBE_MAP, data.depth_cubemap);
     for (uint32_t i = 0; i < 6; ++i) {
         CHECKED_GL_CALL(glTexImage2D, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
                         shadow_width, shadow_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
@@ -168,11 +170,13 @@ void OpenGL::init_point_shadow(uint32_t shadow_width, uint32_t shadow_height, ui
     CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, fbo);
-    CHECKED_GL_CALL(glFramebufferTexture, GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_cubemap, 0);
+    CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, data.fbo);
+    CHECKED_GL_CALL(glFramebufferTexture, GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, data.depth_cubemap, 0);
     CHECKED_GL_CALL(glDrawBuffer, GL_NONE);
     CHECKED_GL_CALL(glReadBuffer, GL_NONE);
     CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
+
+    return data;
 }
 
 void OpenGL::enable_depth_testing() { CHECKED_GL_CALL(glEnable, GL_DEPTH_TEST); }

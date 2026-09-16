@@ -123,10 +123,14 @@ public:
     * @brief Initializes a depth cubemap framebuffer for point shadow mapping.
     * @param shadow_width Width of the shadow map.
     * @param shadow_height Height of the shadow map.
-    * @param fbo Output FBO id.
-    * @param depth_cubemap Output depth cubemap id.
+    * @returns Initialized @ref PointShadowData containing FBO and depth cubemap ids.
     */
-    static void init_point_shadow(uint32_t shadow_width, uint32_t shadow_height, uint32_t &fbo, uint32_t &depth_cubemap);
+    struct PointShadowData {
+        uint32_t fbo{0};
+        uint32_t depth_cubemap{0};
+    };
+
+    static PointShadowData init_point_shadow(uint32_t shadow_width, uint32_t shadow_height);
 
     /**
     * @brief Enables depth testing.

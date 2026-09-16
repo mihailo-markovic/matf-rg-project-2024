@@ -3,9 +3,7 @@
 #define MATF_RG_PROJECT_MAINCONTROLLER_HPP
 #include <engine/core/App.hpp>
 #include <engine/core/Controller.hpp>
-#include <engine/graphics/PointShadow.hpp>
 #include <engine/platform/PlatformEventObserver.hpp>
-#include <engine/resources/Mesh.hpp>
 
 namespace app {
 
@@ -72,8 +70,6 @@ private:
     float m_event_rot_start = 0.0f;
     bool m_prev_t_down = false;
     bool m_prev_r_down = false;
-
-    engine::graphics::PointShadow m_point_shadow;
 };
 }// namespace app
 

@@ -24,7 +24,6 @@ void MainController::initialize() {
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
     engine::graphics::OpenGL::enable_depth_testing();
-    m_point_shadow = graphics->init_point_shadow(1.0f, 25.0f);
 }
 
 bool MainController::loop() {
@@ -57,25 +56,16 @@ void MainController::draw_floor() {
 
 
     engine::resources::Model *floor = resources->model("floor");
-    engine::resources::Shader *shader = resources->shader("basic");
+    engine::resources::Shader *shader = resources->shader("parallax");
 
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
-    // glm::mat4 model = glm::mat4(1.0f);
-    // model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
-    // shader->set_mat4("model", model);
-    // floor->draw(shader);
-
-
+    shader->set_float("heightScale", 0.02f);
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
-
-    graphics->draw_parallax_map(
-            resources->shader("parallax"),
-            resources->model("floor"),
-            model,
-            0.02f);
+    shader->set_mat4("model", model);
+    floor->draw(shader);
 }
 
 void MainController::draw_lamp() {
@@ -259,6 +249,12 @@ void MainController::light_setup() {
         shader->set_float("spotLight.linear", 0.045f);
         shader->set_float("spotLight.quadratic", 0.0075f);
         shader->set_float("material_shininess", 30.0f);
+        if (shader_name == "parallax") {
+            shader->set_vec3("dirLight_dir", glm::vec3(1.0f, -1.0f, 1.0f));
+            shader->set_vec3("spotLight_pos", glm::vec3(0.7f, 3.0f, -1.0f));
+            shader->set_vec3("spotLight_dir", glm::vec3(0.0f, -1.0f, 0.0f));
+            shader->set_vec3("pointLight_pos", glm::vec3(1.0f, 1.5f, 5.0f));
+        }
         shader->set_vec3("viewPos", camera->Position);
     }
 }
@@ -314,7 +310,7 @@ void MainController::draw() {
     glm::vec3 point_light_pos = glm::vec3(1.0f, 1.5f, 5.0f);
 
     auto *depth_shader = resources->shader("point_shadow_depth");
-    graphics->begin_point_shadow_render(m_point_shadow, depth_shader, point_light_pos);
+    graphics->begin_point_shadow_render(depth_shader, point_light_pos);
     draw_scene_depth(depth_shader);
     graphics->end_point_shadow_render();
 
@@ -324,10 +320,10 @@ void MainController::draw() {
     for (auto *shader: {basic_shader, parallax_shader}) {
         shader->use();
         shader->set_int("depthMap", 5);
-        shader->set_float("far_plane", m_point_shadow.far_plane());
+        shader->set_float("far_plane", graphics->point_shadow_far_plane());
         shader->set_vec3("pointLightPos", point_light_pos);
     }
-    graphics->bind_point_shadow_map(m_point_shadow, 5);
+    graphics->bind_point_shadow_map(5);
 
     draw_floor();
     draw_ferdinand();
@@ -340,6 +336,7 @@ void MainController::end_draw() {
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     platform->swap_buffers();
 }
+
 }// namespace app
 
 // MainController

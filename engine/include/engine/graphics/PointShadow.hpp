@@ -29,6 +29,7 @@ public:
     uint32_t depth_cubemap() const { return m_depth_cubemap; }
     uint32_t fbo() const { return m_fbo; }
     float far_plane() const { return m_far_plane; }
+    float near_plane() const { return m_near_plane; }
 
     void destroy();
 

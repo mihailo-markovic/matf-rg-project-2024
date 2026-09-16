@@ -88,31 +88,25 @@ public:
     */
     void draw_skybox(const resources::Shader *shader, const resources::Skybox *skybox);
 
-    void draw_parallax_map(const resources::Shader *shader,
-                           resources::Model *model,
-                           const glm::mat4 &model_matrix,
-                           float height_scale);
-
-    /**
-    * @brief Initializes point shadow mapping for a point light.
-    * @param near Near plane of the shadow frustum.
-    * @param far Far plane of the shadow frustum.
-    * @returns Initialized PointShadow object.
-    */
-    PointShadow init_point_shadow(float near = 1.0f, float far = 25.0f);
-
     /**
     * @brief Renders the scene into the depth cubemap from the point light's perspective.
-    * @param shadow The PointShadow object.
     * @param depth_shader The depth shader (must be point_shadow_depth.glsl).
     * @param light_pos Position of the point light.
     */
-    void begin_point_shadow_render(const PointShadow &shadow,
-                                   const resources::Shader *depth_shader,
+    void begin_point_shadow_render(const resources::Shader *depth_shader,
                                    const glm::vec3 &light_pos);
 
-    void bind_point_shadow_map(const PointShadow &shadow, uint32_t texture_unit = 5);
+    /**
+    * @brief Binds the depth cubemap to the given texture unit for sampling in shaders.
+    * @param texture_unit The texture unit to bind to (default: 5).
+    */
+    void bind_point_shadow_map(uint32_t texture_unit = 5);
 
+    /**
+    * @brief Returns the far plane of the point shadow frustum.
+    * @returns Far plane value.
+    */
+    float point_shadow_far_plane() const { return m_point_shadow.far_plane(); }
     /**
     * @brief Ends the shadow render pass and restores the viewport.
     */
@@ -189,6 +183,7 @@ private:
     glm::mat4 m_projection_matrix{};
     Camera m_camera{};
     ImGuiContext *m_imgui_context{};
+    PointShadow m_point_shadow{};
 };
 
 /**
