@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sci Fi Hangar
+* source:	https://sketchfab.com/3d-models/sci-fi-hangar-0625335964a5496980ccfbc3b76c49ff
+* author:	GetDeadEntertainment (https://sketchfab.com/GetDeadEntertainment)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sci Fi Hangar" (https://sketchfab.com/3d-models/sci-fi-hangar-0625335964a5496980ccfbc3b76c49ff) by GetDeadEntertainment (https://sketchfab.com/GetDeadEntertainment) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

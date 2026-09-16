@@ -9,6 +9,8 @@
 #include <engine/core/Controller.hpp>
 #include <engine/graphics/Camera.hpp>
 #include <engine/platform/PlatformEventObserver.hpp>
+#include <engine/resources/Model.hpp>
+#include <engine/graphics/PointShadow.hpp>
 
 struct ImGuiContext;
 
@@ -86,9 +88,31 @@ public:
     */
     void draw_skybox(const resources::Shader *shader, const resources::Skybox *skybox);
 
-    Camera *camera() {
-        return &m_camera;
-    }
+    /**
+    * @brief Renders the scene into the depth cubemap from the point light's perspective.
+    * @param depth_shader The depth shader (must be point_shadow_depth.glsl).
+    * @param light_pos Position of the point light.
+    */
+    void begin_point_shadow_render(const resources::Shader *depth_shader,
+                                   const glm::vec3 &light_pos);
+
+    /**
+    * @brief Binds the depth cubemap to the given texture unit for sampling in shaders.
+    * @param texture_unit The texture unit to bind to (default: 5).
+    */
+    void bind_point_shadow_map(uint32_t texture_unit = 5);
+
+    /**
+    * @brief Returns the far plane of the point shadow frustum.
+    * @returns Far plane value.
+    */
+    float point_shadow_far_plane() const { return m_point_shadow.far_plane(); }
+    /**
+    * @brief Ends the shadow render pass and restores the viewport.
+    */
+    void end_point_shadow_render();
+
+    Camera *camera() { return &m_camera; }
 
     /**
     * @brief Compute the projection matrix.
@@ -123,17 +147,13 @@ public:
     * Projection matrix is always computed when the @ref GraphicsController::projection_matrix is called.
     * @returns @ref PerspectiveMatrixParams
     */
-    PerspectiveMatrixParams &perspective_params() {
-        return m_perspective_params;
-    }
+    PerspectiveMatrixParams &perspective_params() { return m_perspective_params; }
 
     /**
     * @brief Get the current @ref PerspectiveMatrixParams values.
     * @returns @ref PerspectiveMatrixParams
     */
-    const PerspectiveMatrixParams &perspective_params() const {
-        return m_perspective_params;
-    }
+    const PerspectiveMatrixParams &perspective_params() const { return m_perspective_params; }
 
     /**
     * @brief Use this function to change the orthographic projection matrix parameters.
@@ -141,17 +161,13 @@ public:
     * when @ref GraphicsController::projection_matrix is called.
     * @returns @ref PerspectiveMatrixParams
     */
-    OrthographicMatrixParams &orthographic_params() {
-        return m_ortho_params;
-    }
+    OrthographicMatrixParams &orthographic_params() { return m_ortho_params; }
 
     /**
     * @brief Get the current @ref OrthographicMatrixParams values.
     * @returns @ref PerspectiveMatrixParams
     */
-    const OrthographicMatrixParams &orthographic_params() const {
-        return m_ortho_params;
-    }
+    const OrthographicMatrixParams &orthographic_params() const { return m_ortho_params; }
 
 private:
     /**
@@ -167,6 +183,7 @@ private:
     glm::mat4 m_projection_matrix{};
     Camera m_camera{};
     ImGuiContext *m_imgui_context{};
+    PointShadow m_point_shadow{};
 };
 
 /**
@@ -176,8 +193,7 @@ private:
 class GraphicsPlatformEventObserver final : public platform::PlatformEventObserver {
 public:
     explicit GraphicsPlatformEventObserver(GraphicsController *graphics)
-        : m_graphics(graphics) {
-    }
+    : m_graphics(graphics) {}
 
     void on_window_resize(int width, int height) override;
 

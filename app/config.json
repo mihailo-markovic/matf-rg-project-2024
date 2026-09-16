@@ -1,11 +1,31 @@
 {
   "resources": {
     "models": {
+      "ferdinand": {
+        "path": "Ferdinand/Ferdinand.obj",
+        "flip_uvs": true
+      },
+      "floor": {
+        "path": "floor/floor1.obj",
+        "flip_uvs": true
+      },
+      "lamp": {
+        "path": "lamp/scene.gltf",
+        "flip_uvs": true
+      },
+      "lamp1": {
+        "path": "lamp1/StreetLight.obj",
+        "flip_uvs": true
+      },
+      "hangar": {
+        "path": "hangar1/scene.gltf",
+        "flip_uvs": true
+      }
     }
   },
   "window": {
-    "height": 600,
+    "height": 1200,
     "title": "Hello, window!",
-    "width": 800
+    "width": 1600
   }
 }

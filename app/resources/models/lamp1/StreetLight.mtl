@@ -1,0 +1,3 @@
+newmtl lambert1
+map_Kd textures/StreetLight_map1_color.png
+map_Kn textures/StreetLight_map1_nmap.png
